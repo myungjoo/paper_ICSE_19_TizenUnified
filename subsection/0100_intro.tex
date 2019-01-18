@@ -1,0 +1,47 @@
+Traditionally, software platforms for consumer electronics devices (e.g., Tizen, Android, and iOS) have clear target device profiles: phones, wearables, tablets, or TVs.
+Such profiles define mostly (if not completely) common API sets, features, and requirements across different hardware sets.
+However, the wide spread of IoT and edge devices has introduced the new challenge: the long tail of the IoT~\cite{1Want2015EnablingTI}, which incurs the following significant challenges for software platforms:
+\begin{itemize}
+\item Each IoT device and application might require their own customized software platform: \textit{configurability}.
+\item Varying software platforms are to be built from the same source codes with different configurations. It may require extremely high build workloads: \textit{build explosion}.
+\end{itemize}
+
+Both challenges have already induced significant developmental costs with traditional smart devices.
+\textit{Build explosion} enforces developers and infrastructure to build and test software packages repeatedly for each profile.
+Besides, \textit{build explosion} attributes to the lack of \textit{configurability} by incurring high developmental costs to platform developers, which is further deteriorated by the long tail of the IoT.
+Even if we have only 10 different IoT devices, not 100, developers need to build 10 times for each commit and the build infrastructure gets additional x 10 workloads.
+This is especially unacceptable with the long tail-ness; each IoT device type is going to have little revenue although the whole IoT device portfolio may have huge revenue.
+We cannot afford linearly increasing platform development costs with the increasing number of IoT device types.
+Tizen platform developers have been already overloaded with repeated build and test workloads per profile and suffering from the lengthy build task queues of the overloaded build infrastructure.
+Thousands of build tasks have been waiting several hours in task queues during busy hours despite of a lot of powerful build servers.
+
+\textit{Configurability} is deteriorated not only by \textit{build explosion}, but also by the difficulties in composing a customized software platform with software packages for a specific product.
+There are well-established package management systems (e.g., Advanced Package Tool (APT) for DEB packages~\cite{blackman2000debian} and Zypper/DNF for RPM packages~\cite{foster2003red}), which allow to choose software packages without understanding the dependencies of packages.
+However, developers still need to specify packages required for their software platform among the thousands of candidates, which require deep understandings on the software platform from device drivers and system software to applications.
+Because such developers are rare, if we need to prototype a lot of varying devices and their more varying tailored software platforms, the traditional well-established tools cannot support the required configurability.
+Thus, we need new tools that allow novice developers (or developers without full-ranges of knowledge across software platforms) to compose properly tailored software platform.
+
+
+We have addressed \textit{build explosion} first in order to enable \textit{configurability} because we should be able to build software packages for various devices with affordable workloads.
+We address \textit{build explosion} by unifying the Tizen build procedures and binary repositories, enforcing every profile to share the same set of binary packages, not only the source codes: Tizen:Unified project.
+In order to unify Tizen, we have introduced new rules for platform developers and plugin architectures with new dependency rules, enforced by build systems and Linux packaging systems, which are upstreamed to the open source communities as well so that the new rules comply with the standard.
+Thanks to the cooperation from platform developers and the communities, we could have fully unified Tizen projects and repositories since Tizen 4.0 in 2017.
+
+
+Unifying binary repositories has mitigated the build workload not only for new IoT devices, but also for the traditional smart devices.
+Tizen project (Tizen:Unified in \url{https://build.tizen.org}) no longer builds five times for five profiles, but builds only once for all device types, which is expected to reduce the workload of infrastructure roughly to one fifth.
+After the completion of Tizen:Unified, peak build task waiting queue size has dropped from thousands to tens \cite{2Ham2017TDC}.
+
+
+We have applied new infrastructure designed to promote \textit{configurability} along with Building Blocks of Tizen after the completion of Tizen:Unified.
+Building Block definitions~\cite{3TizenWikiBB,4LeeKeynote2017TDC} provide easy-to-configure components to build a custom software platform, which are maintained by product managers.
+Building Blocks are meta packages with hierarchical structures that provide easy-to-understand descriptions.
+A Building Block does not have any file contents but have relational information of software packages and other Building Blocks; thus, it is a meta package.
+Tizen Image Creator (TIC)~\cite{2Ham2017TDC} offers a web user interface to configure a custom software platform with Building Blocks and individual packages.
+Tizen offers an instant software platform creation service for novice IoT developers, Craftroom~\cite{5CraftroomURL}, a simplified and beautified variation of TIC.
+TIC and Craftroom provide customized software platforms for IoT developers within minutes, not hours or days.
+
+We have designed and implemented both projects, Tizen:Unified and Tizen:Configurability, refactored software packages, restructured build procedures and rules, which enabled on-the-fly platform customization.
+Build and packaging rules introduced in this work are either within the Linux standard (RedHat/OpenSUSE) or upstreamed to the community.
+We have reduced build and test workloads significantly for conventional devices and enabled Tizen for wider ranges of device types with significantly reduced workloads for both the developers and the infrastructure.
+This work is applied to Tizen 4.0 (2017) and 5.0 (2018), enabling various new products and prototypes, ranging from home appliances and IoT prototypes to autonomous driving systems and on-device AI platforms.

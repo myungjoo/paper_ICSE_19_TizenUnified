@@ -1,0 +1,451 @@
+\begin{abstract}
+The wide spread of IoT devices and AI-based edge devices has introduced new challenges for software platforms. In the last decade, the main targets of such platforms, smart phones, wearable devices, and smart TVs, in general and relatively, have well-defined common features and requirements for each of the few device types. However, IoT devices have much longer tails, which make it intractable to define a common software platform profile. With such higher diversities, we can no longer afford individual build configurations per device type, which unacceptably multiplies burdens of developers as well as build systems. Besides, on-the-fly prototyping and creating platforms for new devices is required by both third party and in-house IoT developers. With traditional platform tools, the capability to do so is limited; such tasks usually require rare release and build experts and too much time and effort. With the projects described in this paper, we have successfully addressed the issues: a) unifying Tizen software platform code and its infrastructure to increase the development productivity for multiple device types and b) making Tizen configurable so that even third party developers may create their own Tizen variations on-the-fly easily and quickly. This has enabled a public service, CraftRoom.tizen.org, where IoT developers may acquire their own customized Tizen on-the-fly for their own products. This work is integrated into Tizen 4.0 and later as open source software. Based on this work, Tizen team has started IoT platforms and we have adapted Tizen to autonomous vehicle systems and AI software platform with affordable costs.
+\end{abstract}
+
+\section{Introduction}
+Traditionally, software platforms for smart devices (e.g., Tizen, Android, and iOS) have clear target device profiles—phones, wearables, tablets, or TVs—, which define mostly (if not completely) common API sets, features, and requirements across different hardware sets. However, the wide spread of IoT devices has introduced the new challenge: the long tail of the IoT [1]. The long tail of the IoT incurs the following significant challenges for software platforms:
+\begin{itemize}
+\item Each IoT device and application might require their own customized software platform: Configurability.
+\item With various device types, various OS images are to be built from the same source codes with different configurations. Then, we need to build and unit-test too many times. Build systems are required to do the same as well: Build Explosion.
+\end{itemize}
+
+Both challenges have induced significant but affordable costs with traditional smart devices. However, with the long tail of the IoT, this is no more affordable. Even if we have only 10 different IoT devices, not 100, developers need to build 10 times for each commit and the build system gets additional x 10 workloads. This is especially unacceptable with the long tail-ness; each IoT device type is going to have little revenue although the whole IoT device portfolio may have a lot. We cannot afford linearly increasing platform development costs with the increasing number of IoT device types. Tizen platform developers had been already overloaded with repeated build and test workloads per profile and overly waiting for overloaded build systems. Thousands of build and test tasks had to wait several hours in a queue during busy hours even though we had more than 200 powerful build servers.
+
+
+Before addressing Configurability, we have addressed Build Explosion first because we should be able to build software packages for various devices types without causing additional workload for both platform developers and build systems. We have addressed Build Explosion by unifying the Tizen build procedures and binary repositories, enforcing every profile to share the same set of binary packages, not only the source codes; a.k.a., Tizen:Unified project.
+
+
+In order to unify Tizen, we have introduced new rules for platform developers and plugin architectures with new binary dependency rules, enforced by build systems and Linux packaging systems, which are upstreamed to the open source communities as well so that the new rules becomes the standard. Thanks to the cooperation from platform developers and the communities, we could unify Tizen binaries into one build project and prevent any further diverges from the unification since Tizen 4.0 in 2017.
+
+
+Unifying binary repositories of Tizen has mitigated the build workload of not only for new IoT devices, but also for the traditional smart devices. Tizen project (Tizen:Unified in \url{https://build.tizen.org}) no longer builds five times for five profiles, but builds only once for all. After the migration to Tizen:Unified, peak build task waiting queue size has dropped from thousands to tens [2].
+
+
+With Tizen:Unified completion, we could apply the infrastructure designed to support Configurability with Building Blocks to Tizen. Based on Tizen:Unified, building block definitions [3][4] provide easy-to-configure components to build a custom software platform. Note that although first building block definitions were written by authors, the current “release” definitions are written by Tizen team. Tizen Image Creator (TIC) [2] offers a web user interface to configure a custom software platform even easier. Based on TIC, Tizen offers an instant software platform creation service for IoT developers, Craftroom [5]. TIC and Craftroom provide a customized software platform for IoT developers within minutes, not hours or days.
+
+
+\begin{figure}
+\label{FIG_TZN_BR_INF}
+\missingfigure[figwidth=6cm]{FIG 1 in SBPA18}
+\caption{Tizen build and release infrastructure. Before (top) and after this work (bottom).}
+\end{figure}
+
+Fig. \ref{FIG_TZN_BR_INF} shows how the overall Tizen infrastructure has been improved with this work. Based on this work, we are also delivering customized software platforms (OS and development environments) for autonomous driving systems and STAR on-device platform in AI Center as well.
+By unifying Tizen and providing configurability with building blocks, we have reduced build and test workloads significantly and enabled Tizen for wider ranges of device types with significantly reduced workloads.
+
+
+
+
+
+
+
+\section{Contributions}
+
+We have constructed both projects, Tizen:Unified and Tizen:Configurability, refactored Tizen platform software packages, restructured build procedures and rules, which enabled on-the-fly platform customizations. Build and packaging rules introduced in this work are either within the Linux standard (Redhat/OpenSUSE) or upstreamed to the community as a new standard. 
+
+
+This work is applied to Tizen 4.0 (2017) and 5.0 (2018), enabling various new products and prototypes, ranging from home appliances and various IoT prototypes to autonomous driving systems and AI on-device platforms. The Tizen:Unified/Configurable team has been relatively small and consisted of four members, which indirectly shows the efficiency of the project as well. The four members have had the following roles.
+
+
+One member, a server script writer, has implemented various tools for other members, including regression detector, overall Tizen source code quality monitoring tools, and test build server utilities. Another member, while refactoring a few packages, has focused on communicating developers and reviewers, persuading, negotiating, or reminding them to improve or accept our refactoring patches. The other two members have focused on refactoring hundreds of packages.
+
+
+There had been a few packages that could not be entirely refactored by this team. Such packages are either too huge or have complicated dependencies with other packages: EFL, input subsystems, and web browser. For such packages, we have extensively guided and cooperated with the corresponding developers. In the earlier phase of the project, we have held several seminars and meetings for the entire Tizen developers or lead developers to let them understand what was going on and why we were doing it.
+
+
+\section{Related Work}
+
+\subsection{Linux binary package management}
+
+Mancinelli et al. [11] contribute an effective and automatic way to support distribution editors in handling those issues that were, until now, mostly addressed using ad-hoc tools and manual techniques. Most of  the existing approaches on the problem of managing dependencies are targeted at designing component systems, with a clear top-down process typical of a software architecture viewpoint, while the component systems we have to handle come from the huge preexisting infrastructures. They described their framework they have developed for managing the complexity and improving the quality of large package based Free and Open Source Software (FOSS) systems. Their tools were used at Caixa Magica and Mandriva distribution in parallel with their standard distribution life cycle phases.
+
+
+Software Build Systems [12] describes an extensive treatment of the software build process including the choices, benefits, and challenges of a well-designed build process. It surveys the tools and techniques for building software products and the ways things go wrong. It depicts that inadequate build systems can dramatically impact developer productivity. For example, bad dependencies, false compile errors, failed software images, slow compilation, and time-wasting manual processes are just some of the byproducts of a subpar build system. Also, he explains how to optimize the performance and scalability of your build system. 
+
+
+Galindo et al. [13] address the issues such as the lack of realistic variability models to evaluate those techniques and tools is recognized as a major problem by the community. They suggest that Debian packages dependency language can be considered as a variability language. Also, they provide a mapping from this language to propositional formulas enabling their analysis by means of SAT solvers. They focus on other variability dependency language existing in open source community increasing even more the availability of realistic variability models up to 20,000 packages to the Software Product Line (SPL) community. However, they do not detect anomalies in Debian models such as conditionally dead packages or redundancies.
+
+
+Cosmo et al. [14] point out why the upgrade problems faced by Free and Open Source Software distributions have characteristics not easily found elsewhere. While for detectable failures trade-offs can be made using snapshot and appropriate partitioning, no fully generic solution exists to counter upgrade failures. They survey current countermeasures to such upgrade failures, argue that they are not satisfactory, and sketch alternative solutions. They only concentrated on applying fingerprinting techniques to cluster maintainer scripts of Debian distribution to get a clear view of all their use cases.
+
+
+Adoption of Academic Tools [15] presents an overview of 10 years of research in this field and the process leading to the adoption of our tools in a FOSS community. They presented three tools such as distcheck and buildcheck, which scan all the packages in a Debian distribution to identify installability issues. They focused on the Debian distribution and in particular they looked at the issues arising during the distribution lifecycle: ensuring buildability of source packages, detecting packages that cannot be installed and bootstrapping the distribution on a new architecture. 
+
+
+Schroeder [16] depicts the package dependency solver library that is called SAT solver. This project was started in May 2007 when the zypp folks decided to switch to a database to speed up installation. It also offers an efficient file and memory representation for the usually complex repository and dependency data, with attributes support. The SAT solver of Libzypper is a port from the red carpet solver, which was written to update packages in an already installed system. Using it for the complete installation progress brought it to its limits. Also, the added extensions support an audit functions for weak dependencies and patches made it fragile and unpredictable. 
+
+
+\subsection{Build systems}
+
+GBS (git-build-system) [17] is a developer command line tool that supports Tizen package development. It is used to generate tarballs based on Git repositories, to do local test buildings, and to submit code to a main build service of Tizen, OBS. From the package maintenance point of view, GBS divides packages into these two categories: native packages where Tizen is the upstream and controls the source code repository and non-native (or upstreaem) packages for which Tizen is not the upstream such as the Linux kernel or zlib.  GBS determines a package as non-native, if the git repository has an upstream branch. The actual name of the upstream branch can be configured using the 'upstream\_branch' in option in the .gbs.conf file. GBS supports manually maintaining patches, that is, outside the automatic patch generation. This may be needed for architecture-dependent patches, for example, as GBS patch generation does not yet support conditional patches. 
+
+
+MIC (Mobile Image Creator) [18] is to create images for Tizen software platform.  With the MIC tool, users can create images of different types for different verticals, including live CD images, live USB images, raw images for KVM, [21] loop images for IVI platforms, and filesystem images for chrooting.  Also, users can chroot into an image using enhanced chroot command of MIC. Besides, it enables converting an image to another image format, a very useful function for those sensitive to image format. 
+
+
+Open Build Service (OBS) [19] is a general build, release, and package-distribute system for various target platforms in an automatic, consistent and reproducible way. OBS enables to release software for a wide range of operating systems and hardware architectures. It is an open and complete distribution development platform that provides a transparent infrastructure for development of Linux distributions, used by openSUSE, Tizen and other distributions. Also, it supports Fedora, Debian, Ubuntu, RedHat and other Linux distributions. Also, it provides extensible web interfaces and APIs. The build process executes all the instructions that it finds in the build recipe. If the build is successful, the files of the package are installed into a sandbox, where the binary packages are created; the packages are released as RPM [23] by default. Then, the packages are released and deployed via repository compatible with package managers.
+
+
+Zypper [20] is a package manager that installs, updates, and removes packages and manages repositories. It is especially useful for managing software packages remotely or with shell scripts. With zypper, we can easily update the distribution. Besides, we can update the software platform in run-time. Note that Tizen is fully compatible with zypper although it is not included in most traditional Tizen profiles.
+
+
+\section{Design and Implementation}
+
+This chapter elaborates the design of Tizen:Unified and Tizen:Configurability projects and how we have implemented and progressed with the projects.
+
+\subsection{Issues of Tizen before 4.0}
+
+The Pre-4.0 Tizen had a single build project for each profile: i.e., mobile, wearable, TV, IVI, and common. Note that “common” profile does not stand for a common part of other four profiles. It had been simply yet another profile that had an ambiguous device type; often it had been considered to be the superset of other profiles as well.
+
+
+With such concepts of profiles, creating a new device type, which happens very frequently with IoT devices, requires to define a new Tizen profile and build project. Then, it incurs redundant build workloads increasing proportionally with the number of profiles. Even if the source code is the exactly same, we are forced to build the whole Tizen repeatedly, which is already too expensive with five profiles.
+
+
+If we need to do prototyping with device types or software platforms, juggling with the configuration of OS images, such overheads makes it almost impossible; the administrators of build system servers will not allow you to create and keep modifying Tizen profiles in the build servers already overloaded, where developers and managers keep complaining about the build latencies.
+
+
+Even if we may prototype new Tizen profiles, having extremely vast number of powerful servers, prototyping new profiles is too difficult for non-build-expert developers. To configure a new profile, we need to fully understand the Tizen meta-packages and the underlying mechanisms of build and imaging systems. Even in the Tizen platform team, there are less than a dozen people with such capabilities.
+
+
+\subsection{Achieving build unification}\label{S_ach_build_unif}
+
+We have achieved the unification of Tizen builds for Tizen 4.0 by April, 2017. By unifying the Tizen builds, we could remove profile specific builds—such as “Tizen:Mobile” or “Tizen:TV”—and provide a single build operations and their results for all Tizen profiles with the name of  “Tizen:Unified”.
+
+
+The objectives of Tizen build unification includes: a) shorter build latencies by eliminating duplicated builds of a software package to make it affordable to support many different profiles, b) allowing to create arbitrary profiles from a single shared binary repository, and as a results of a) and b), c) allowing to create new profiles on-the-fly without rebuilding software packages, enabling the next big step, “Configurable Tizen”.
+
+
+There are two major rules to achieve the unification of Tizen builds:
+
+\begin{itemize}
+\item In build-time, build processes (build scripts, compilers, and build systems including OBS [19] and GBS [17]) should not be able to identify the target profile or device except for the architecture: e.g., armv7l and x86\_64. However, processes may identify the profile or device type at install-time and run-time.
+\item Every single binary package (RPM [23] package) of Tizen should be able to co-exist in a single repository as long as the package has the same target architecture.
+\end{itemize}
+
+With the completion of the unification, these rules are applied for all Tizen packages and have been kept so far. With the completion, the build system is configured to enforce the rules automatically so that any violating changes cannot affect the system since Tizen 4.0 [2].
+
+
+The most significantly challenging issue has been the huge number of Tizen software packages. Tizen:Common had 822 packages in April, 2017 [2]. When we started planning Tizen:Unified project in July, 2016, we had 134 packages to be refactored to satisfy the rules. When we started refactoring with the relatively small team members of four in November, 2016, the number of refactoring target packages has increased to 171.
+
+
+Another significantly challenging issue for the unification is the regression, where a complying package is modified to violate the rules. We had multiple cases where packages refactored to comply being modified to violate by developers. We have also observed multiple packaging complying from the beginning become violating suddenly during the project, increasing the number of refactoring targets further.
+
+
+Ideally, the refactoring of each and every package is better executed by the main contributor or maintainer of the package. However, it requires each and every main contributor and maintainer to fully understand the rules, the mechanisms of build systems, and how to refactor their own packages for Tizen:Unified with their own feature and bugfix workload. During the early phase of Tizen:Unified project, as a pilot program between July 2017 and August 2017, we have tried the “ideal” method with few small groups along with full assistance from the Tizen:Unified team. As the result of the pilot program, we have learned that the following points:
+
+
+\begin{itemize}
+\item We should not expect that each main contributor to understand the underlying build system of Tizen. They are users, not developers of the build system and a good build system does not require its users to understand the build system itself.
+\item It is extremely difficult to ensure that the rules are kept during active software development where new commits are applied daily if not hourly.
+\item Applying yet another coding rule requires additional burden to developers. Even if we could have justified the need to a few key members (small team leaders and main contributors), it was often not enough to let them put some additional efforts to prevent others from breaking the rules or review more carefully. Moreover, we could not enforce the rules with build systems until each and every package follows the rule perfectly; otherwise, we will get build breaks with every snapshot and the whole Tizen team will not be able to function properly.
+\end{itemize}
+
+
+As a conclusion from the points, we have decided to do all the refactoring and find how to refactor for each package in Tizen. However, a few packages (Chromium, EFL, and local/input systems) had much complicated issues that enforced us to rely on their own main contributors to refactor the packages.
+
+
+During the progress of Tizen:Unified project, to detect any attempts of regression, we have developed and operated a gerrit [6] monitoring service that reviews incoming commits and find any possible regressions from them. In many cases, we could have prevented such commits being merged in time.
+
+
+During the project, we have categorized to-be-refactored packages into the following types:
+\begin{enumerate}[A.]
+\item The build script is aware of the profile. It may use different source code per the profile (“%profile” macro defined by the build project). Often the source code has compiler preprocessor conditional statements (#ifdef) activated by the build scripts.
+\item Multiple git repositories generate packages with a common name. For example, both mobile/…/efl-config.git and wearable/…/efl-config.git had generated efl-config.
+\item The build script depends on a package, model-build-features. The package, model-build-features, generates macro definitions based on the profile or device types, affecting build scripts of other packages.
+\end{enumerate}
+
+We have observed a lot of useless dependencies on the profiles or device types and removed them immediately. We also have had cases where the dependencies are easily removed by using configuration files in /etc. 
+
+
+\subsubsection{Runtime profile identification}\label{SS_RUntimeProfileId}
+
+If we cannot avoid per-profile behaviors of a package, applying the runtime profile identification mechanism is recommended. This mechanism is recommended because it allows having a fully unified binary for the package across different profiles without the need for installing different binary packages for each profile. The only more recommendable method is to behave exactly same regardless of the profile definition itself, which is sometimes impossible. Many Type-A cases have been resolved by this.
+
+
+In order to allow runtime identification, we have used a Tizen API to detect the profile and removed all preprocessor conditionals related. Many of such refactoring commits can be found with the URL: \url{https://review.tizen.org/gerrit/#/q/message:%22remove+profile+build%22+status:merged+message:%22runtime%22} (you need to login to review.tizen.org with Tizen.org accounts before entering the URL.)
+
+
+Table \ref{TABLE_CODE_IFDEF} shows a simple example where such refactoring is beneficial and Table \ref{TABLE_CODE_IF} shows the refactored code. 
+
+%% TODO : Check the template if this is allowed.
+\begin{table}
+\begin{verbatim}
+#ifdef PROFILE_MOBILE
+Do_mobile_action();
+#else
+Do_common_action();
+#endif
+\end{verbatim}
+\label{TABLE_CODE_IFDEF}
+\caption{Type-A per-profile code with \#ifdef}
+\end{table}
+
+\begin{table}
+\begin{verbatim}
+if (get_profile() == PROFILE_MOBILE)
+    Do_mobile_action();
+else
+    Do_common_action();
+\end{verbatim}
+\label{TABLE_CODE_IF}
+\caption{Refactored code}
+\end{table}
+
+\subsubsection{Inter-package dependency management}
+
+Sometimes, we have created different binary packages for each profile or device types along with meta packages or virtual packages (RPM [23] capabilities) to make per-profile differences transparent to other packages.
+
+
+Let us assume that we have a package X, which needs to have different contents for its binaries for mobile profile. Then, we can modify the build scripts of RPM (.spec files) to generate “X-profile\_mobile.rpm”. The first variation of the mechanism is to generate “X.rpm” file for other profiles and to generate “X-profile\_mobile.rpm” to declare that it may act as “X.rpm” by adding inverse-dependency of “Provides: X”. The second variation is to create a meta package, “X.rpm”, without any files, but with meta data only stating that it has dependencies on its subpackages or plugins, “X-compat” and to create plugin subpackages of mobile and other profiles declaring that they provide “X-compat”, which enforces to install one of such plugins to install “X.rpm”.
+
+
+Note that for the first variable, “X.rpm” needs to declare that it provides “X-profile\_common”, “X-profile\_wearable”, and so on in order to be explicit for per-profile configurations. Besides, both variations require plugins to declare “Conflict” statements to prevent installing plugins of different profiles for one main package. The first variation is usually applied when only few profiles require different binaries. The second is usually applied if each profile has its own plugins or configuration files.
+
+
+The example of the first variation is the commit 4fad77614 of libsvi (\url{https://git.tizen.org/cgit/platform/core/system/libsvi/commit/?id=4fad77614ae6916670b22a1e8dac0d49e87a5d4b}). The example of the second variation is the commit 53135dcb of model-config-baytrail (\url{https://git.tizen.org/cgit/platform/adaptation/intel_baytrail/model-config-baytrail/commit/?h=tizen&id=53135dcb7ed8f2d332f7437de08d5b0aa4332179}).
+
+
+A critical side effect of this mechanism is that the Tizen build system (both OBS [19] and GBS [17]) gets confused by multiple candidates for inter-package dependency resolutions if a package depending on the package with this mechanism applied is being built. In other words, if X.rpm is required by Y.rpm when we build Y.rpm, the build system cannot determine whether it should install X-profile\_mobile.rpm or the other; both are allowed and build systems are not allowed to accept such ambiguity.
+
+
+We can resolve such ambiguity by adding weak dependencies, Recommends. The contents of binaries do not matter for build dependents if they are shared objects; only their forms (header files) matter, which holds for Tizen native platform binaries. However, we had exceptions to this, mentioned in the next section; the contents of external headers (APIs) differ per profile.
+
+
+
+\begin{figure}
+\label{FIG_TZN_TYPEB_RESOL}
+\missingfigure[figwidth=6cm]{FIG 1 in SBPA18}
+\caption{The left shows the first variation and the right shows the second variation}
+\end{figure}
+
+Fig. \ref{FIG_TZN_TYPEB_RESOL} elaborates inter-package dependency management mechanism. Note that any packages external to X should not explicitly depend on profile plugin subpackages (*-profile\_*.rpm). Such packages should refer to the main package (X in Fig. \ref{FIG_TZN_TYPEB_RESOL}) only and let the package management system handle the rest.
+
+
+Type-B and Type-C are mostly resolved by declaring inter-package dependencies explicitly after properly refactoring the build scripts and source codes so that per-profile parts are separated into different binary packages. There are many Type-A cases resolved by this mechanism as well when it is too difficult to apply the mechanism of the Section \ref{SS_RUntimeProfileId}. It is usually when a profile has completely different source code files, which incurs too large modifications to apply runtime profile identifications. In such cases of Type-A, we generated different executables for each profile and packaged them into different binary packages, which is often referred as sub packages. However, for the package management mechanism, there are no differences between packages and sub packages.
+
+
+\subsubsection{Inappropriate definitions of APIs}
+
+Unfortunately, Tizen developers have generated external header files with different function declarations per profile or even different header files are used per profile. Moreover, there had been an extreme case where Tizen public API header has different C enum definitions per profile: https://git.tizen.org/cgit/platform/core/api/player/commit/?id=006bfe52966343e974f665f2ea85f05ec62de45e. In this case, the C enum definitions of mobile had been PLAYER\_DISPLAY\_TYPE\_EVAS = 1 and PLAYER\_DISPLAY\_TYPE\_NONE = 2 while those of wearable had been PLAYER\_DISPLAY\_TYPE\_EVAS = 2 and PLAYER\_DISPLAY\_TYPE\_NONE = 1. This extreme case has required Tizen public API changes that may make previous applications incompatible with new Tizen versions. Thus, as in the commit mentioned above, we redefined C enum values and defined old values (1 and 2) as obsolete along with compatibility resolving code that behaves differently for each profile.
+
+
+For the first case, where different function declarations are used per profile by using compiler preprocessor conditionals, we have manually refactored header files removing all preprocessor conditionals. We cannot apply the mechanism of Section 4.2.2. for headers exposed externally because the depending package (“Y.rpm” in the examples of Section 4.2.2.) cannot be identical for different profiles; profile dependency is no more transparent to external packages! \url{https://review.tizen.org/gerrit/#/c/96504/} is an example of this case. \url{https://review.tizen.org/gerrit/#/c/96504/} is an example of this case. 
+
+
+The resolution for the second case is same as the first case. It requires manual inspection and refactoring as well, but with more care and efforts as the difference is larger. A fortunate case (where only the comments differ) is \url{https://review.tizen.org/gerrit/#/c/101404/} while an unfortunate case is \url{https://review.tizen.org/gerrit/#/c/96504/}.
+
+
+\subsubsection{Workarounds}
+
+There are a few cases where we cannot completely remove the dependencies on profiles or device types from the binary packages except for the plugin subpackages, which do not incur external dependencies.
+
+\begin{enumerate}
+\item Device drivers or kernel binaries require dependencies on device types and often, such dependencies are hardcoded.
+\item We are not allowed to generalize product or business division specific routines. A business division has required keeping their product specific conditional codes embedded in Tizen while such codes cannot be generally used for other profiles or devices. Although, in principle, this is undesirable as it fragments the source code and damages the readability because it usually heavily depends on preprocessor macros, this has been something we could not alter.
+\end{enumerate}
+Case 1 includes Linux kernel, which is built and installed for all devices, but their source code repositories or build configuration might differ. We have applied an altered method of Section 4.2.2 as shown in Fig. \ref{FIG_TZN_KERNELDEP}.
+
+
+\begin{figure}
+\label{FIG_TZN_KERNELDEP}
+\missingfigure[figwidth=6cm]{FIG 1 in SBPA18}
+\caption{The altered method of Fig. \ref{FIG_TZN_TYPEB_RESOL} for Linux kernel}
+\end{figure}
+
+As shown in Fig. \ref{FIG_TZN_KERNELDEP}, different Linux kernel binaries from various git source repositories provide the capability of “Linux-kernel” so that any package or software platform manifests requiring “Linux-kernel” can be satisfied with one of Linux-kernel binary packages. However, as mentioned before, we cannot have multiple candidates for a single dependency (or capability in RPM documents) in build time. Thus, for external kernel module repositories, a representative kernel repository has been chosen to provide the “Linux-kernel-modulebuild” capability, which is the emulator kernel repository. Note that we can have a single representative for each Linux kernel version. Therefore, if there are multiple Linux kernel versions required for a specific Tizen version, we can choose multiple representatives, one for each kernel version. We may choose multiple representatives without introducing the ambiguity for build systems by specifying kernel versions in kernel modulebuild dependencies. That is “BuildRequires: linux-kernel-modulebuild = 4.4.0” and “Provides: linux-kernel-modulebuild = 4.4.0” instead of “BuildRequires: linux-kernel-moduilebuild” and “Provides: linux-kernel-modulebuild”.
+
+
+For case 2, we have configured the Tizen main public build systems to ignore any macros related with products or business divisions. Although we have allowed preprocessor macro conditionals for products and business divisions, as long as the main build system ignores such macros, we can guarantee that the resulting binaries are complying Tizen:Unified. Simultaneously, with the same source code repositories, a business division may keep their own special source code activated in their own build projects in their own private build systems. However, codes creating different binaries under the same package names should be discouraged. Such codes are usually the results of laziness (or overloaded workloads) of developers; they should have used configuration files (.ini files in /etc directory) or accessed Tizen device APIs, probing device type, name, and profiles. We hope, in some day, such lame codes are totally eliminated.
+
+
+\subsubsection{How we have progressed}
+
+Regressions by incoming new commits breaking the rules mentioned in Section \ref{S_ach_build_unif} have been headaches for the Tizen:Unified team members. Before April, 2017, during the active development of Tizen:Unified project, the build system could not be configured to ignore per-profile build configurations. Thus, we have constantly reviewed incoming Tizen commits with a monitoring service we have implemented to find any regressions. Such regressions are notified to our team, which, in turn, allow us intervene the related activities. In most cases, we could have successfully dropped or corrected such commits before merging.
+
+
+Once every single package in Tizen has obeyed the given rules to keep Tizen unified, we have removed all per-profile build projects from the build system and unified all Tizen packages into a single build project named “Tizen:Unified”, which does not allow any dependencies on profile or device types in building Tizen packages. Note that build projects for older versions (e.g., Tizen 2.x or 3.0) are untouched and kept with per-profile basis; however, they are no more actively developed and do not require heavy build workloads as currently developed versions. Another build project, “Tizen:Base” exists independently in order to reduce the performance impact from cyclic build dependencies of toolchains. Cyclic build dependencies incur heavy redundant build workloads and are prohibited in Tizen:Unified because it is expected to be rebuilt frequently; most developers contributes to Tizen:Unified daily. Note that as long as multiple build projects do not share the same source repository and inter-project dependency is acyclic, there is no build performance problem and on-the-fly configurability.
+
+
+We can add a disjoint build project that does not have cyclic inter-project dependencies without any deterioration on the performance or the configurability. Thus, we can create many prototypes aggressively and quickly. In the autonomous driving project and the on-device AI platform project, we have a lot of additional source repositories, over 100. As long as these two projects are not officially accepted as Tizen public—we are prototyping!—, it is not allowed to add such packages (over 100) to Tizen:Unified build project.
+
+
+By adding a disjoint build project, depending on Tizen:Unified, Tizen:TAOS (representing Tizen AI OS Support, Tizen Autonomous-driving OS, and Tensor-Aware OS simultaneously), we are aggressively prototyping new software platforms for these two new projects. When there is a new need for yet another variation, a single developer can generate and deploy a new software platform and its binary images to corresponding developers and devices within few hours, which is frequently occurring. The inter-project dependencies are shown in Fig. \ref{FIG_TZN_INTERPDEP}.
+
+\begin{figure}
+\label{FIG_TZN_INTERPDEP}
+\missingfigure[figwidth=6cm]{FIG 1 in SBPA18}
+\caption{Inter-project dependencies of Tizen build projects. The top shows pre-4.0 and the bottom shows 4.0 or later.}
+\end{figure}
+
+\subsection{Achieving configurability}
+
+With the completion of Tizen:Unified project, Tizen has achieved the basic ability to configure a software platform on-the-fly. Because every single binary package can be located in a single package repository and there is no more ambiguities between package names any more, we can now use package management systems without glitches anymore: zypper, DNF, or yum, which are equivalent to apt in Ubuntu/Debian systems.
+
+
+For most workstations, PCs, or servers, this degree of configurability is enough and we may have nothing more to progress. However, it does not hold for embedded systems or a deployable device set consisting of both devices and software platform. For such systems, we need to continuously release and deploy OS images that can be flashed to devices easily without much manual labor. Traditionally, in Tizen, we have been using a tool named MIC; MeeGo Image Creator, renamed as MIC Image Creator after the demise of MeeGo project.
+
+
+Issues with traditional MIC and its supporting tools are:
+
+\begin{enumerate}
+\item It is too difficult to create a new software platform configuration (.ks file) for most users; you need build system experts who understand Tizen and its infrastructure deeply. Thus, it can be practically impossible for most third party developers to create Tizen prototypes.
+\item You need your own dedicated Linux workstation to create Tizen images. It would be more appropriate if IoT application developers with an access to web browsers and Tizen Studio [23] can write their own IoT applications and generate proper Tizen OS images for their own IoT devices and applications on the fly.
+\end{enumerate}
+
+In order to address Issue 1, we have introduced the concept of building blocks and implemented the first draft in \url{https://git.tizen.org/cgit/tools/building-blocks/} in May, 2017. The concept of building blocks is now the core of Tizen profiles and device type definitions. It is also the main tool for project managers. With building blocks, users can create prototypes without the knowledge of thousands of individual Tizen packages or to choose hundreds from them, but with the fewer (about one or two dozens) abstract and easy-to-understand building block names: e.g., Bluetooth, Haptic, and Default-App-Setting.
+
+
+In order to address Issue 2, we have introduced Tizen Image Creator (TIC), which has the web frontend with node.js. Analyzing individual packages and generating deployable OS images for the configured prototype is executed in a web server. However, the service and the code of TIC is not opened to the public. The code of TIC is opened to Samsung internally only in the Samsung gerrit server: \url{http://suprem.sec.samsung.net/gerrit/}.
+
+
+There is publically opened web service that has TIC as its backend at \url{https://craftroom.tizen.org}: Craftroom. Craftroom service offers much simplified and easier interfaces specifically focused on IoT developers. Note that Craftroom itself is designed and developed by another team along with a UI/UX team; we have provided its backend (TIC) and enabling infrastructure (Building Blocks).
+
+
+\subsubsection{Building blocks}
+
+A building block is a meta packages that designates mandatory packages and optional packages. As a meta package, it does not have its own files, but has dependency relation information consisting the list of mandatory or optional packages. A mandatory package is an individual Tizen package or another build block that is installed if the corresponding building block is chosen. An optional package is an individual Tizen package or another building block to be shown in the user interface if the corresponding building block is chosen. Unlike mandatory packages, optional packages are not automatically chosen with the corresponding building block.
+
+
+\begin{figure}
+\label{FIG_TZN_BBHier}
+\missingfigure[figwidth=6cm]{FIG 1 in SBPA18}
+\caption{Example of building block hierarchy}
+\end{figure}
+
+Building blocks have the hierarchy between the blocks that can be expressed as a tree with a root node and a leaf node is an individual Tizen package of a empty building block. Fig.5. shows an illustrative example of building blocks as a tree. However, please note that the actual definitions of build blocks are far more complex with a lot of building blocks and individual packages.
+
+
+In Fig. \ref{FIG_TZN_BBHier}, boxes filled with gray represent building blocks. Boxes without gray filling represent individual Tizen packages. Although most of building blocks are supposed to contain individual Tizen packages, we omitted to simplify the figure. Boxes with solid thick outlines represent mandatory packages. Boxes with dashed outlines represent optional packages. The root node, “Headed IoT”, does not belong to any other building blocks; thus, it is neither mandatory nor optional. 
+
+
+
+\begin{figure}
+\label{FIG_TZN_TIC_SCRSHOT1}
+\missingfigure[figwidth=6cm]{FIG 1 in SBPA18}
+\caption{Building block hierarchy of May 2017 draft}
+\end{figure}
+
+Note that non-hierarchical relations between building blocks are not shown in the figure; e.g., “BT” requires “WiFi”. The hierarchy of building blocks is defined in order to visualize building blocks for users. Fig. \ref{FIG_TZN_TIC_SCRSHOT1}, shows how the hierarchy generates building blocks lists for users with TIC, which is to be elaborated in the next section. 
+
+
+In order to make the definitions of building blocks highly readable to project managers and developers and to make the resulting relations consistent, there are a list rules in writing building blocks along with a rule checker that breaks generating building block packages if there is a rule break. The rule is defined as human-readable text in [7] and the rule checker is defined in [8]. Because the list of rules is too lengthy to be described in this paper, please refer to [7].
+
+
+\begin{figure}
+\label{FIG_TZN_TIC_SCRSHOT2}
+\missingfigure[figwidth=6cm]{FIG 1 in SBPA18}
+\caption{TIC screenshot where users may choose presets}
+\end{figure}
+
+\subsubsection{Tizen Image Creator (TIC)}
+
+Tizen experts can prototype software platforms easily and quickly with building blocks. However, third party developers or casual developers require approaches more user-friendly than writing the KickStarter’s [9] .ks file. With web application experts of another team, we have introduced TIC, which visualizes building blocks and individual packages with their relations and capabilities to configure in detail and in abstract simultaneously.
+
+
+Fig. \ref{FIG_TZN_TIC_SCRSHOT2} shows the screenshot of TIC on a web browser. There are three different categories of building blocks: Presets, Domains, and Options. With Presets, users can select predefined sets of building blocks and individual packages before actually choosing blocks or packages in Domains or Options. For example, if a user wants to create a prototype based on Tizen-TV, he/she may choose TV preset and proceed. On the top-right panel, users can review the currently selected package or block. On the bottom-right panel, users can preview the currently configured software platform.
+
+
+With Domains, users may choose building blocks listed based on the Tizen API sets. With Options, we provide additional blocks that may help prototyping although they are not supposed to be used for actual commercial products: e.g., debugging tools, text editors, and profiling tools. Recently, with development of Tizen 5.0, such building blocks and packages are suggested to be moved to “Tizen:Tools”; however, related tasks are still in progress.
+
+
+When users have completed configuring the software platform, they may order TIC to create the corresponding OS image file in the server so that they can download the file for deployment a few minutes later. Users may define additional binary package repositories so that they may add their own custom binaries. Please refer to the presentations and demonstrations of TDC 2017 for more details of TIC [2].
+
+
+\subsubsection{Craftroom}
+
+Based on TIC, the Tizen team has opened a public web service, Craftroom (\url{https://craftroom.tizen.org}), [5] which provides much simplified services of TIC. With Craftroom, users may generate Tizen IoT software platforms based on the hardware specifications and their own IoT applications developed with Tizen Studio [23] within minutes.
+
+\subsection{Avoid side effects for commercialization projects}
+
+There has been a major concern from release engineers. In a commercialization build project of a business division, they build the corresponding packages only. They do not include packages not intended for their profiles in their own build system, which is a fork of Tizen public. Thus, if we release Tizen as in the form of Tizen:Unified, they may suffer from longer build latencies due to the inclusion of packages not required by their profiles.
+
+
+In order to resolve this issue, we have implemented an inter-package dependency analyzer to generate the optimal list of source repositories for a specific software platform configuration. In order to have a minimal fork for a specific commercialization project, the release engineers may use the tool to minimally choose repositories to be forked.
+
+
+\section{Evaluations}
+
+Both Tizen:Unified and Tizen:Configurability are applied to Tizen 4.0 and later with the main build systems (OBS, \url{https://build.tizen.org}) and the private build systems (SPIN/TRBS). In 2017, the main build systems had been a set of dedicated servers located in the US. In 2018, the main build systems are migrated to Amazon Web Service (AWS).
+
+
+\begin{figure}
+\label{FIG_OBS_TASKQUEUE}
+\missingfigure[figwidth=6cm]{FIG 8 in SBPA18}
+\caption{Build server task queue status in Mar-Apr, 2017}
+\end{figure}
+
+Fig. \ref{FIG_OBS_TASKQUEUE} shows the build task workload by describing the waiting task queue lengths. The light khaki lines show the number of packages ready to be built and waiting for computing resource allocations. We have migrated to Tizen:Unified from per-profile builds on Apr 4, which is denoted by vertical line in the middle of the figure. Note that at this stage, Tizen 4.0 had been still in progress and Tizen 3.0 projects (per-profile basis) had been being built as well as Tizen 4.0 projects.
+
+
+\begin{figure}
+\label{FIG_OBS_MUNIN}
+\missingfigure[figwidth=6cm]{FIG 9 in SBPA18}
+\caption{Number of busy build servers in Mar-Apr, 2017}
+\end{figure}
+
+As we can see in Fig. \ref{FIG_OBS_TASKQUEUE}, the peak queue length has been decreased dramatically from several thousands to less than a thousand. Normally, the queue length has been reduced to less than dozens or zero from hundreds in typical business hours.
+
+
+Fig. \ref{FIG_OBS_MUNIN} shows the number of busy build servers. We can again see the dramatic reduces of workloads after applying Tizen:Unified to the build system. After Tizen:Unified is applied, developers usually no longer experience any delays in work queues; in most cases, there have been available build servers waiting for developers! This increases the productivity of developers greatly by allowing developers to get the build and integration results ready for test deployment in shorter time (within an hour, not a day).
+
+
+With the results of Tizen:Configurability, which is enabled by the results of Tizen:Unified, Tizen has started IoT projects (\url{https://wiki.tizen.org/Tizen_IoT}) along with CraftRoom [5].
+
+
+We have further utilized Tizen:Configurability to provide continuous integration and deployment services along with software platform for Intelligent Driving Assistance project and STAR On-Device project as well, which is named as TAOS [10]. TAOS is being continuously releasing its software platform binaries for both projects with frequent changes in its configurations or creations with new hardware sets and software requirements.
+
+
+Without the results of Tizen:Configurability, the required build task workload and the complexity of choosing individual packages would have required far more man-month to support the two projects. We have two members related with TAOS support and most of their workload is due to provide guides to other developers, to implement supplementary developmental tools (profilers and emulators), or to port external software packages for other developers, not on configuring and test-building software platforms. Note that in the old days, we had needed several experts for such tasks.
+
+
+\section{Additional Lessons Learned}
+
+In this study, we have observed critical to-dos and not-to-dos. Most of they are simple rediscoveries of software engineering principles, but ignored in the development process especially in Samsung Electronics. 
+
+\begin{itemize}
+\item	Do automate coding rule checks and prevent any mishaps from merging to the source repository. Otherwise, we are destined to lose in the battle against regressions.
+\item	Do not allow preprocessor conditionals in platform release code that may result differently per device type. It is a bad technical debt for a software platform.
+\item	Do not allow preprocessor conditionals expressions especially in header files or having different header files. This is even worse; it is contagious.
+\item	Do promote run-time device-type discovery and run-time conditionals; use “if”, not “\#if”.
+\item	Do promote configuration files (.ini files) parsed in run-time or boot-time.
+\item	Do not use any hints of device types or profiles in build configurations or build scripts, except for device drivers, firmware, and kernels. In build-time, the system should be agnostic to device types or profiles.
+\end{itemize}
+
+Fortunately, Tizen is now configured to mandate many of these, relieving us from such concerns. However, commercialization projects usually have forked Tizen itself, which makes it vulnerable to these concerns. Thus, software release engineers in such projects should be aware of these concerns and be able to mandate additional rules.
+
+
+\section{Conclusions}
+
+We have proposed and applied the unification of build projects and binary repositories, improving the efficiency of software development, and the concepts of building blocks and the highly configurable platforms. In the due course, we have restructured the Tizen platform by refactoring hundreds of software packages and implementing key infrastructures to support Configurability with building blocks.
+
+
+This work is successfully included in Tizen and released via Tizen 4.0 and succeeded to Tizen 5.0, allowing creating software platforms for various IoT devices and prototypes including autonomous driving systems (Intelligent Driving Assistance) and artificial intelligence software platforms (STAR On Device.) Besides, the proposed mechanisms have significantly improved the overall productivity of platform developers by reducing turnaround time of coding to integration and deployment and by reducing the number of binary packages to be created and tested for each source repository. According to the analysis in May, 2017 [2], the number of non-base packages built for a full build has been drastically reduced to 968 from 3,483. Moreover, after the full migration of build systems to AWS, this work saves the cost of running AWS by reducing the number of build tasks.
+
+
+%%%%% REFERENCES %%%%%
+
+
+[1] Want, R., et al. Enabling the Internet of Things. Computer 1, 28–35 (2015)
+[2] Ham, M. Tizen Unified \& Configurable: Create OS for Any IoT and Smart Devices On-The-Fly with Minimal Resources. TDC  2017. 
+[3] Kim W. Tizen Building Block Definitions for IoT, \url{https://wiki.tizen.org/Tizen_IoT/tbb#Structure_of_Building_Blocks}
+[4] Lee, H. What’s Next with Tizen? (Keynote). TDC 2017.
+[5] Craftroom. \url{https://craftroom.tizen.org/}
+[6] Gerrit Code Review. \url{https://www.gerritcodereview.com/}
+[7] Tizen Building Block Rules (2017), \url{https://git.tizen.org/cgit/tools/building-blocks/plain/RULES}
+[8] Tizen Building Block Rule Checker (2017), \url{https://git.tizen.org/cgit/tools/building-blocks/plain/rule_checker.py}
+[9] Tizen KickStarter Git Repository, \url{https://git.tizen.org/cgit/platform/upstream/kickstarter}
+[10] TAOS Repository (2018), \url{https://github.sec.samsung.net/STAR/TAOS-Repository}
+[11] Fabio Mancinelli, Jaap Boender, and Roberto Di Cosmo,  "Managing the Complexity of Large Free and Open Source Package-Based Software Distributions," 21st IEEE/ACM International Conference on Automated Software Engineering (ASE), pp. 199-208, 2006 
+[12] Peter Smith, "Software Build Systems: Principles and Experience (1st ed.)," Addison-Wesley Professional, Mar, 2011
+[13] José A. Galindo, David Benavides, and Sergio Segura, "Debian packages repositories as software product line models. towards automated analysis," First International Workshop on Automated Configuration and Tailoring of Applications (ACOTA), pp 29-34, 2010
+[14] Roberto Di Cosmo, Stefano Zacchiroli, and Paulo Trezentos, "Package upgrades in FOSS distributions: details and challenges," International Workshop on Hot Topics in Software Upgrades, 2008
+[15] Pietro Abate and Roberto Di Cosmo, "Adoption of Academic Tools in Open Source Communities: The Debian Case Study," OSS, vol 496. Springer, pp 139-150, 2017, \url{https://doi.org/10.1007/978-3-319-57735-7_14}
+[16] Schroeder M. satsolver SAT Solver for package management, suse.de, 2007
+[17] git-build-system (GBS), 2014, \url{https://source.tizen.org/documentation/reference/git-build-system}
+[18] MIC Image Creator, 2014, \url{https://source.tizen.org/documentation/reference/mic-image-creator}
+[19] Open Build Service (OBS), 2015, \url{https://openbuildservice.org/}
+[20] zypper, Novell, \url{https://en.opensuse.org/Portal:Zypper}, 2014
+[21] Uri Lublin, Yaniv Kamay, Dor Laor, and Anthony Liguori,  "kvm: the Linux virtual machine monitor," Proceedings of the Linux symposium. Vol. 1. 2007
+[22] Foster-Johnson, Eric, "Red Hat RPM Guide," New York: Wiley, 2003
+[23] Tizen Studio (2018), \url{https://developer.tizen.org/development/tizen-studio}
+

@@ -1,0 +1,14 @@
+In this study, we have observed critical to-dos and not-to-dos. Most of they may seem to be simple rediscoveries of software engineering principles; however, they have been largely ignored in the development process.
+
+\begin{itemize}
+\item	Do automate coding rule checks and prevent any mishaps from merging to the source repository. Otherwise, we are destined to lose in the battle against regressions, especially if we have a lot of developers with different backgrounds.
+\item	Do not allow code divergences--normally, due to \texttt{\#if} and \texttt{\#ifdef} in C, that results in different binaries per device type. It is a bad technical debt for a software platform.
+\item	Do not allow code divergences especially in header files or having different header files per device types. This is even worse; it is contagious to other software packages.
+\item	Do promote run-time, boot-time, or install-time device-type discovery; use \texttt{if}, not \texttt{\#if}. Using configuration files (.ini files) parsed in run-time or boot-time is also recommendable.
+\item	Do not use any hints of device types or profiles in build configurations or build scripts, except for device drivers, firmware, and kernels. In build-time, the code and its build system should be agnostic to device types or profiles.
+\end{itemize}
+
+Fortunately, Tizen is now configured to mandate many of these, relieving us from such concerns.
+Commercialization projects usually have forked Tizen itself along with their own build infrastructure in their own company or business divisions, which makes it vulnerable to these concerns.
+However, as long as they remain as forked projects, not the mainline projects, any related issues are expected to be cleaned up at every new version releases Tizen; thus, they are ignorable threats for platform developers.
+

@@ -1,0 +1,78 @@
+Note that this section is temporal to collect bullet items before writing the full paper.
+\newline
+\newline
+
+%\subsection{Target conferences}
+%\subsubsection{Top Confereces(1st tier)}
+%[ICSE] International Conference on Software Engineering\newline
+%[FSE] ACM SIGSOFT Symposium on the Foundations of Software Engineering\newline
+%[ASE] IEEE/ACM International Conference on Automated Software Engineering\newline
+%\newline
+
+%\subsubsection{Excellent Confereces(2nd tier)}
+%[APSEC] Asia-Pacific Software Engineering Conference\newline
+%[SPLC] International Software Product Line Conference\newline
+%[ICSSP] International Conference on Software and System Process\newline
+%[OSS] International Conference on Open Source Systems\newline
+%\newline
+
+
+
+%\subsection{Motivations}
+%\begin{itemize}
+%    \item With diverging device types with uncertainties of their requirements, a software platform and OS for embedded devices needs to be highly configurable without much configuration latencies. In other words, when a device maker prototypes with its IoT devices, the maker should be able to generate software platforms from various configurations or requirements in short time.
+%    \item with consistencies between configurations / switchable pkgs ... (need to elaborate with great care)
+%    \item With various devices types supported, Tizen developmental infrastructure \footnote{I mean OBS} had been suffering from excessive build workload. A lot more number of device types (The IoT era was coming!) were required to be supported by Tizen without expanding the infrastructure itself. This has been seriously blocking experiments of new device types and their new software platforms based on or composed from Tizen.
+%    \item With different device types represented by \textit{profile}, the source code was diverging. the binaries were diverging as well, making them not inter-operable. Building and unit testing each package became a hell for developers.
+%\end{itemize}
+
+
+\subsection{Related works}
+\begin{itemize}
+    \item Strong dependencies between software components, ESEM 2009, 	Pietro Abate, https://arxiv.org/abs/0905.4226
+    \item MPM: a modular package manager, CBSE 2011, Pietro Abate, https://dl.acm.org/citation.cfm?id=2000255
+    \item Debian packages repositories as software product line models. towards automated analysis, 2010, JA Galindo Duarte, http://www.lsi.us.es/~segura/files/papers/galindo10-acota.pdf
+    \item satsolver SAT Solver for package management , https://doc.opensuse.org/projects/satsolver/11.2/
+    \item OPIUM: Optimal Package Install/Uninstall Manager, http://ieeexplore.ieee.org/abstract/document/4222580/, ICSE2007, Chris Tucker
+    \item Package upgrades in FOSS distributions: details and challenges, HotSWUp 2008, Roberto Di Cosmo, https://dl.acm.org/citation.cfm?id=1490292
+    \item Managing the Complexity of Large Free and Open Source Package-Based Software Distributions, ASE 2006, Fabio Mancinelli, http://ieeexplore.ieee.org/abstract/document/4019575/?anchor=authors
+    \item A modular package manager architecture, Information and Software Technology 2013, Pietro Abate, https://doi.org/10.1016/j.infsof.2012.09.002
+    \item Solving package dependencies: from EDOS to Mancoosi, Cornell University, 2008, Ralf Treinen 
+    \item Maximum RPM, Redhat, Richard K. Swadley, 1997, ISBN 0672311054, 
+https://dl.acm.org/citation.cfm?id=523251
+    \item Towards maintainer script modernization in FOSS distributions, IWOCE 2009, Davide Di Ruscio, https://dl.acm.org/citation.cfm?id=1595803
+    \item Software Build Systems: Principles and Experience, Addison Wesley Professional, 2011, ISBN 9780321717283, Peter Smith,  https://dl.acm.org/citation.cfm?id=1971982
+\end{itemize}   
+
+\subsection{Contributions : REWRITE or RECATEGORIZE }\footnote{This is rather "results", not contributions}
+\begin{itemize}
+	\item Unified diverging SW development processes and efforts for extremely diverging types of target systems: mobile, wearable, TV, IVI, various IoT devices, and even autonomous driving systems. This significantly reduces workload of developers and allows to adapt for more diverging device types.
+    \item Allows on-the-fly and easy generation of software platform with user requirements. This is especially beneficial for prototyping IoT devices. The requirements may be described by a set of SW platform features or extracted from user created applications.
+    \item Significantly reduce workload of build infrastructure and release engineers.
+\end{itemize}
+
+\subsection{Why contributions to Tizen matter?}
+\begin{itemize}
+	\item Significance of Tizen
+    \item Generality of the contributions to Tizen. How other systems may replicate what Tizen did
+\end{itemize}
+
+\subsection{New challenges and how they are mitigated}
+\begin{itemize}
+    \item Unlike unit testing, which became much easier with Tizen:Unified, integration testing (smoke tests, API tests, or any other testing mechanism requiring a running and integrated system)\footnote{Use academic terminology for test categories!} has become complicated. We do not have a fixed set of SW platform releases anymore; device adapters may have extremely various configurations.
+    \begin{itemize}
+        \item ...
+    \end{itemize}
+\end{itemize}
+
+\subsection{Proposed idea}
+\begin{itemize}
+	\item Unify lots of fragmented profiles.
+	\item Building-Blocks to customize platform.
+	\item easy-to-use recipe for various users (newbie, students, start-up, experts,...)
+    \item verify of grammar of spec to optimize package (e.g., running time, build time, bugs)
+    \item Blah.....
+\end{itemize}
+
+\subsubsection{Software Packaging}
+\subsubsection{Software Package Manage}

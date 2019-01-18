@@ -1,0 +1,95 @@
+% 논문 상신 결재 완결번호 : EP-2C15BBB05DF046F38F38EDD596390365
+\documentclass[10pt,conference,letterpaper]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[hyphens]{url}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=.8]{beramono}
+
+% For table showing code
+\usepackage{caption}
+
+\usepackage{listings}
+
+\usepackage{xcolor}
+
+\lstset{basicstyle=\ttfamily,
+  numbers=left,
+  numbersep=5pt,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+% For parallel code blocks
+\usepackage{fancyvrb}
+% For enumerate with A. B. B., ..
+\usepackage{enumerate}
+% For more control in figure
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+
+\title{Making Configurable and Unified Platform, \\
+Ready for Broader Future Devices}
+
+\author{\IEEEauthorblockN{MyungJoo Ham, Geunsik Lim}
+%\author{\IEEEauthorblockN{Anonymized for double blind reviews}
+\IEEEauthorblockA{\textit{Samsung Research, Samsung Electronics} \\
+%\IEEEauthorblockA{\textit{} \\
+Seoul, Republic of Korea \\
+\{myungjoo.ham, geunsik.lim\}@samsung.com}
+}
+\maketitle
+
+\begin{abstract}
+The wide spread of IoT and edge devices has introduced new challenges for software platforms of consumer electronics, of which traditional targets had been smart phones, wearable devices, and smart TVs.
+In general, such traditional devices share well-defined common features and requirements, which emerging IoT devices lack of.
+Besides, IoT and edge devices have much longer tails, which makes it further intractable to define common features and requirements, composing a customized software platform.
+Such high diversities prohibits having individual build configurations per device type, which multiplies burdens for developers as well as infrastructures.
+Besides, IoT developers need to create customized platforms for new devices on-the-fly, which traditional platform tools are not capable of; such tasks usually require the rare release and build experts along with significant time and effort.
+In this paper, We have successfully addressed the issues: unifying software platform (Tizen) and its infrastructure to increase the developmental productivity for varying device types and making Tizen highly configurable so that even third party developers may create their own variations on-the-fly easily and quickly.
+This has enabled a public web service, \url{Craftroom.tizen.org}, where IoT developers may acquire their own customized Tizen on-the-fly.
+This project is integrated into Tizen since 4.0, which is released to the public, and has enabled Tizen team to start IoT platforms and a small team to prepare software platforms for autonomous driving systems and on-device AI systems with minimal time and effort.
+\end{abstract}
+
+\begin{IEEEkeywords}
+software engineering, build system, release and deployment, software platform
+\end{IEEEkeywords}
+
+\section{Introduction}\label{S_intro}
+\input{./subsection/0100_intro.tex}
+
+\section{Related Work}\label{S_related}
+\input{./subsection/0200_bkg_rltwk.tex}
+
+\input{./subsection/0300_design_impl.tex}
+
+\section{Evaluations}\label{S_eval}
+\input{subsection/0400_eval.tex}
+
+\section{Lessons Learned}\label{S_lessons}
+\input{subsection/0500_lessons.tex}
+
+\section{Conclusions}\label{S_conc}
+\input{subsection/0600_conc.tex}
+
+\section*{Acknowledgements}
+
+We thank our colleagues from Tizen Team and open source communities of Tizen, Red Hat, and openSUSE who provided insight and helped the development.
+We especially thank Saikumar Divvela, HyeKyung Kim, and Donghoon Shin for their time and effort for the development, TaeJun Ha, YeongKyoon Lee, and their colleagues for the implementation of the web service, TIC. We also appreciate Gyungpyo Hong, Hong-Seok Kim, Duil Kim, Hyogun Lee, Seunghwan Cho, and Jong-Deok Choi for discussions and support.
+
+
+% Copy from SBPA2018 Draft
+%\input{./SBPA2018.tex}
+
+% Let's do not generate bullet item section from now on. 
+% \section{Bullet Items}\label{S_bullet_items}
+% \input{./subsection/0000_bullet.tex}
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,tizenreform}
+
+\end{document}

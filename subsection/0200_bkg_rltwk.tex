@@ -1,0 +1,82 @@
+%%%%%%%%%%%% WIP. Needs extensie rephrases!!!!!
+
+\subsection{Linux package management}
+
+% Add a short summary for this subsection
+A modern software platform has extremely large number of packages with complex inter-package dependencies, which is partially induced by shared libraries and daemon services complicating dependencies and dividing packages into smaller packages.
+As a result, modern Linux package management system is required to manage complex inter-package dependencies consistently and efficiently.
+
+
+\textit{Mancinelli et al.}~\cite{11Mancinelli2006ASE} have proposed to handle dependencies between packages automatically.
+Most of its prior approaches have focused on declaring forward dependencies (i.e., \texttt{Requires} or \texttt{BuildRequires} in RPM systems) and following them.
+This work~\cite{11Mancinelli2006ASE} tries to automatically discover undeclared dependencies by inspecting build scripts.
+Caixa Magica and Mandriva Linux distributions use this method.
+
+
+%%%%%%%%%%%% WIP. Needs extensie rephrases!!!!! CANNOT UNDERSTAND!
+Requirements for future software build systems including choices, benefits, and challenges of a well-designed build process are described in~\cite{12Smith2011SBSBook}.
+It surveys the tools and techniques for building software and how things may go wrong.
+They conjecture that inadequate build systems can dramatically deteriorate the productivity; a subpar build system may incur bad dependencies, false compile errors, failed software images, slow compilation, and excessive labors.
+It explains how to increase the performance and scalability of a build system. 
+
+
+%%%%%%%%%%%% WIP. Needs extensie rephrases!!!!! CANNOT UNDERSTAND!
+\textit{Galindo et al.}~\cite{13Galindo2010DebianPR} suggest realistic variability models to evaluate dependencies, a major and traditional problem of Linux communities.
+They suggest that the package dependency language of Debian is a variability language and provide a mapping from the language to propositional formulas analyzing dependencies with SAT solvers.
+They address other variability dependency languages of open source communities as well, which increases the availability of realistic variability models up to 20,000 packages for the Software Product Line community.
+However, they do not detect anomalies as conditionally dead packages or redundancies.
+
+
+\textit{Cosmo et al.}~\cite{14DiCosmo2008PUF} point out why the upgrade problems faced by Free and Open Source Software (FOSS) distributions have characteristics not easily found elsewhere.
+They provide periodic snapshots of a whole software platform, which can mitigate OS upgrade problems along with disk partitioning.
+They survey current countermeasures to such upgrade failures, argue that they are not satisfactory, and sketch alternative solutions.
+They focus only on applying fingerprinting techniques to cluster maintainer scripts of Debian distribution to get a clear view of all their use cases.
+
+
+\textit{Adoption of Academic Tools}~\cite{15abate2017debian} presents an overview of 10 years of research in this field and the process leading to the adoption of our tools in a FOSS community.
+They presented the check tools such as \textit{distcheck} and \textit{buildcheck}, which scan all the packages in a Debian distribution to identify installability issues.
+They focused on the Debian distribution and in particular they looked at the issues arising during the distribution lifecycle: ensuring buildability of source packages, detecting packages that cannot be installed and bootstrapping the distribution on a new architecture. 
+
+
+\textit{Schroeder}~\cite{16Schroeder2007SatSolverURL} depicts the package dependency solver library that is called SAT solver.
+This project has been started in May 2007 when the ZYpp community has decided to use a database to speed up installation.
+It offers an efficient file and memory representation for complex dependency relations and package repositories.
+The SAT solver of Libzypper is a port from the red carpet solver, which is to update packages of a running system.
+In addition to SAT solver, they provide ad-hoc mechanisms to discover some of undeclared dependencies and an audit function for weak dependencies.
+
+
+\textit{Zypper}~\cite{20Zypper_URL} is a package manager that installs, updates, and removes packages and manages repositories.
+It is especially useful for managing software packages remotely or with shell scripts.
+With Zypper, we can easily update the distribution.
+Besides, we can update the software platform in run-time.
+Note that Tizen is fully compatible with Zypper although it is not included in most traditional Tizen profiles.
+
+\subsection{Build systems of Tizen}
+
+% Add a short summary for this subsection
+We describe build and release systems of Tizen, a software platform for IoT/edge devices, general consumer electronics, mobile phones, wearable devices, or even autonomous driving vehicles.
+The standard packaging for Tizen is RPM~\cite{foster2003red}, which is also standard for OpenSUSE, RedHat, and Fedora.
+We do not discuss Debian packages~\cite{blackman2000debian} although it is one of the two major standards along with RPM in Linux communities.
+Note that the expression power of inter-package dependencies of Debian is not higher than that of RPM; Debian package dependencies may be expressed with RPM dependencies.
+
+\textit{Git Build System (GBS)}~\cite{17GBS2014TizenURL} is a build and packaging tool for Tizen platform development.
+It generates tarballs, builds sources, and packages binaries from Git repositories.
+GBS also does local unit tests, provides build and test sandboxes, submits code to the build infrastructure, OBS.
+Package maintainers may use GBS to maintain their upstream branches or forks, or to prototype packages not included in Tizen mainline.
+
+
+\textit{MIC Image Creator (MIC, originated from Meego Image Creator)}~\cite{18MIC2014TizenURL} builds software platform images for Tizen.
+MIC creates images of different types, including live CD images, live USB images, raw images for KVM~\cite{21Kivity07kvm}, loop images for IVI platforms, and filesystem images for chrooting.
+Users can enter into the generated images with MIC. MIC changes the apparent root directory with a \textit{chroot} mechanism for the current running processes.
+Note that MIC uses Zypper~\cite{20Zypper_URL} to resolve package dependencies during image creation.
+
+
+\textit{Open Build Service (OBS)}~\cite{19OBS_URL} is a general build, release, and distribution system for various target platforms in an automatic, consistent, distributed, and reproducible way.
+OBS releases software for a wide range of operating systems and hardware architectures with extensible web interfaces and APIs.
+It is an open and complete distribution development platform that provides a transparent infrastructure for the development of Linux distributions, used by openSUSE and Tizen.
+OBS supports Fedora, Debian, Ubuntu, RedHat, and many distributions.
+Like GBS, OBS builds binaries in a sandbox to ensure the consistency.
+OBS may create binary packages in varying formats including RPM~\cite{22foster2002red}, DEB, and many others.
+The created packages can be released and deployed via repositories compatible with package managers.
+
+

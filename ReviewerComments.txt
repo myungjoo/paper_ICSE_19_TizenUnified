@@ -1,0 +1,7 @@
+# SBPA 2018
+
+1. (TS Jun) Tizen platform has been announced as the flexible platform to adapt to various devices. In fact, Tizen was not the flexible one in the real meaning. The work presented the new approach to achieve the REAL flexible platform. However, I am curious if this approach carries out new technique or scalability. It seems that package dependency would be the core base scheme, which has been well-known in SW management. Also, to arrange such package separation and dependency graph, the developers require figuring out the relation between packages.
+
+2. (C. Lee) This work focuses on improving productivity with the framework for variety of heterogeneous end systems ranging from IOT to edge devices. To do that, they proposed a framework that provide unification and configurability to the vairous types of end devices.
+
+3. (DH Yoo) 다양한 device용 Tizen을 효율적으로 build 하기위한 방법론 제시. 효율적인 시스템을 구축하였으며, 활용성이 높다고 판단되나, 새로운 Software Engineering 기법의 제시라기 보다는 practical exercise를 잘 정리한 논문으로 보임.
