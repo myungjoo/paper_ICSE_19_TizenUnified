@@ -1,29 +1,29 @@
-Traditionally, software platforms for consumer electronics devices (e.g., Tizen, Android, and iOS) have clear target device profiles: phones, wearables, tablets, or TVs.
-Such profiles define mostly (if not completely) common API sets, features, and requirements across different hardware sets.
+Traditionally, software platforms for consumer electronics (e.g., Tizen, Android, and iOS) has clear target device profiles: phones, wearable devices, tablets, or TVs.
+Such a profile defines common API sets, features, and requirements across different products of the profile.
 However, the wide spread of IoT and edge devices has introduced the new challenge: the long tail of the IoT~\cite{1Want2015EnablingTI}, which incurs the following significant challenges for software platforms:
 \begin{itemize}
-\item Each IoT device and application might require their own customized software platform: \textit{configurability}.
-\item Varying software platforms are to be built from the same source codes with different configurations. It may require extremely high build workloads: \textit{build explosion}.
+\item Each IoT device might require its own customized software platform: \textit{configurability}.
+\item Various software platforms are built from a shared source repository with different configurations. It may incur extremely high build workloads: \textit{build explosion}.
 \end{itemize}
 
-Both challenges have already induced significant developmental costs with traditional smart devices.
+Both challenges have already incurred significant developmental costs with traditional smart devices.
 \textit{Build explosion} enforces developers and infrastructure to build and test software packages repeatedly for each profile.
-Besides, \textit{build explosion} attributes to the lack of \textit{configurability} by incurring high developmental costs to platform developers, which is further deteriorated by the long tail of the IoT.
-Even if we have only 10 different IoT devices, not 100, developers need to build 10 times for each commit and the build infrastructure gets additional x 10 workloads.
-This is especially unacceptable with the long tail-ness; each IoT device type is going to have little revenue although the whole IoT device portfolio may have huge revenue.
-We cannot afford linearly increasing platform development costs with the increasing number of IoT device types.
-Tizen platform developers have been already overloaded with repeated build and test workloads per profile and suffering from the lengthy build task queues of the overloaded build infrastructure.
+Then, \textit{build explosion} attributes to the lack of \textit{configurability} by incurring high developmental costs to platform developers, which increase further with the long tail of the IoT.
+Even if we have only 10 different IoT devices, not 100, we need to develop with 10 different build configurations for each commit and the build infrastructure suffers from additional x 10 workloads.
+This is especially unacceptable with the long tail-ness; each IoT device type has little revenue although the whole IoT device portfolio may have huge revenue.
+We cannot afford linearly increasing development costs with the increasing number of IoT device types.
+Tizen platform developers have been already overloaded with the workloads multiplied by the number of profiles and suffered from the lengthy build task queues of the overloaded build infrastructure.
 Thousands of build tasks have been waiting several hours in task queues during busy hours despite of a lot of powerful build servers.
 
-\textit{Configurability} is deteriorated not only by \textit{build explosion}, but also by the difficulties in composing a customized software platform with software packages for a specific product.
-There are well-established package management systems (e.g., Advanced Package Tool (APT) for DEB packages~\cite{blackman2000debian} and Zypper/DNF for RPM packages~\cite{foster2003red}), which allow to choose software packages without understanding the dependencies of packages.
-However, developers still need to specify packages required for their software platform among the thousands of candidates, which require deep understandings on the software platform from device drivers and system software to applications.
-Because such developers are rare, if we need to prototype a lot of varying devices and their more varying tailored software platforms, the traditional well-established tools cannot support the required configurability.
-Thus, we need new tools that allow novice developers (or developers without full-ranges of knowledge across software platforms) to compose properly tailored software platform.
+\textit{Configurability} is deteriorated not only by \textit{build explosion}, but also by the difficulties in composing a customized software platform with software packages.
+There are well-established package management systems (e.g., Advanced Package Tool (APT) for DEB packages~\cite{blackman2000debian} and Zypper/DNF for RPM packages~\cite{foster2003red}), which allow to choose software packages without understanding inter-package dependencies.
+However, developers still need to specify packages required for their software platform among the thousands of candidates, which require deep understandings of the software platform from device drivers and system software to applications.
+Because such developers are rare, prototyping a lot of varying devices and their tailored software platforms cannot be accomplished with the traditional and well-established tools.
+Thus, we need new tools that allow novice developers (developers without knowledge of wide range of software platforms) to compose properly tailored software platforms.
 
 
 We have addressed \textit{build explosion} first in order to enable \textit{configurability} because we should be able to build software packages for various devices with affordable workloads.
-We address \textit{build explosion} by unifying the Tizen build procedures and binary repositories, enforcing every profile to share the same set of binary packages, not only the source codes: Tizen:Unified project.
+We address \textit{build explosion} by unifying Tizen build procedures and binary repositories, enforcing every profile to share a single repository of binary packages, not only the source codes: Tizen:Unified project.
 In order to unify Tizen, we have introduced new rules for platform developers and plugin architectures with new dependency rules, enforced by build systems and Linux packaging systems, which are upstreamed to the open source communities as well so that the new rules comply with the standard.
 Thanks to the cooperation from platform developers and the communities, we could have fully unified Tizen projects and repositories since Tizen 4.0 in 2017.
 
